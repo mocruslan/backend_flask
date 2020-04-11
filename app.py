@@ -11,7 +11,7 @@ mongo = PyMongo(app)
 # Turn on Cross Origin Resource Sharing (CORS) for all requests
 CORS(app)
 
-#'POST' or 'GET' request under the URL => http://127.0.0.1:5000/data
+#'POST' or 'GET' request under the URL => http://127.0.0.1:5000/qr_data
 @app.route('/qr_data', methods=['GET', 'POST'])
 def backend_request():
     #Database colletion to insert onto
@@ -36,9 +36,9 @@ def backend_request():
             qr_value = {'content': url_value};
             #Insert the URL-parameter value into the database
             qr_collection.insert_one(qr_value);
-            return "True";
+            return "Successful";
         else: 
-            return "False";
+            return "Unsuccessful";
 
 #Just for debug purposes
 if __name__ == "__main__":
