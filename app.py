@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from flask_cors import CORS
+import json
+from bson import json_util
 app = Flask(__name__)
 
 #Connect to the local MongoDB
@@ -13,21 +15,23 @@ CORS(app)
 #'POST' or 'GET' request under the URL => http://127.0.0.1:5000/data
 @app.route('/qr_data', methods=['GET', 'POST'])
 def backend_request():
-
-    #-------------------Just test data
-    data = [
-        {"content":"mochulskyy.com"},
-        {"content":"some other "},
-        {"content":"just"}
-    ]
-    #-------------------Remove
+    #Database colletion to insert onto
+    qr_collection = mongo.db.qr_collection;
 
     #Request 'GET'
     if request.method == 'GET':
 
+        collection = []
+        #Get the collection from the database
+        cursor = qr_collection.find();
+
+        #Turn Cursor into JSON
+        for doc in cursor:
+            json_doc = json.dumps(doc, default=json_util.default)
+            collection.append(json_doc)
         
-        
-        return jsonify(data);
+        #Return JSON object
+        return jsonify(collection);
 
     #Request 'POST'
     elif request.method == 'POST':
@@ -39,13 +43,13 @@ def backend_request():
             #print('----Value is: ' + url_value);
             qr_value = {'content': url_value};
             #Insert the URL-parameter value into the database
-            mongo.db.qrCollection.insert_one(qr_value);
+            qr_collection.insert_one(qr_value);
+            return "True";
+        else: 
+            return "False";
 
-        return True;
-
-
+#Just for debug purposes
 if __name__ == "__main__":
     app.run(debug=True)
-
 
 # Activate flask => '. venv/bin/activate'
