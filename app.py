@@ -17,7 +17,6 @@ def backend_request():
     #Database colletion to insert onto
     qr_collection = mongo.db.qr_collection;
 
-    #Request 'GET'
     if request.method == 'GET':
         #Get the collection from the database
         collection = dumps(qr_collection.find());
@@ -25,17 +24,17 @@ def backend_request():
         #Return JSON object
         return collection;
 
-    #Request 'POST'
     elif request.method == 'POST':
         #Get URL-parameter
-        url_value = request.args.get('content')
-
+        urlValueData = request.args.get('data')
+        urlValueDate = request.args.get('date')
+        urlValueTime = request.args.get('time')
         #Check if it is 'none' or 'empty'
-        if url_value is not None and url_value != '':
-            #print('----Value is: ' + url_value);
-            qr_value = {'content': url_value};
+        if urlValueData is not None and urlValueData != '' and urlValueDate is not None and urlValueDate != '' and urlValueTime is not None and urlValueTime != '':
+            collectionData = {'data': urlValueData, 'date': urlValueDate, 'time': urlValueTime}
+
             #Insert the URL-parameter value into the database
-            qr_collection.insert_one(qr_value);
+            qr_collection.insert_one(collectionData);
             return "Successful";
         else: 
             return "Unsuccessful";
